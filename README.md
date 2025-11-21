@@ -45,4 +45,8 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 
 ## 📄 License
-This project is licensed under the MIT License.
+
+This project is under a **LICENSE**. You may view this project freely, but **permission to use, copy, modify, or distribute it requires prior written consent** from the author.
+
+Contact: [byronc254@gmail.com](mailto:byronc254@gmail.com)
+
