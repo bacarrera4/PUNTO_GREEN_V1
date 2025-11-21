@@ -1,6 +1,4 @@
 import sys
-from openpyxl import load_workbook, Workbook
-from pathlib import Path
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QFont, QPixmap, QMouseEvent, QIcon, QLinearGradient, QBrush, QPalette, QColor, QFontDatabase
 from PyQt6.QtWidgets import QApplication, QWidget, QLineEdit, QVBoxLayout, QLabel, QPushButton, QMessageBox, QGraphicsOpacityEffect,  QGraphicsDropShadowEffect
