@@ -1,4 +1,4 @@
-# PUNTO GREEN V2
+# PUNTO_GREEN_V2
 
 
 An embedded system for a smart vending machine that offers up to 20 different household products such as cleaning liquids, hand soap, laundry detergent, and more. The software controls a PLC via TCP/IP, communicates with an AWS‑hosted API for user information, and includes a PyQt6-based GUI for local human‑machine interaction.
@@ -30,7 +30,7 @@ pip install -r requirements.txt
 
 ## ▶️ Usage
 ```bash
-python main.py
+python HMI.py
 ```
 
 
