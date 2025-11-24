@@ -12,7 +12,7 @@ An embedded system for a smart vending machine that offers up to 20 different ho
 - Real-time status, logging, and error-handling mechanisms
 
 
-## 📂 Project Structure Project Structure
+## 📂 Project Structure
 ```
 project-name/
 ├── src/
