@@ -1,6 +1,5 @@
 import sys
 import time
-
 from pymodbus import client
 from pymodbus.client import ModbusSerialClient
 from PyQt6.QtWidgets import QApplication, QWidget, QCheckBox, QSlider, QPushButton
@@ -17,7 +16,7 @@ class Switch(QWidget):
     def __init__(self):
         super().__init__()
         self.previous_value = False
-        self.value = False
+        self.m2 = False
         self.setWindowTitle("PRUEBA PLC")
         self.setGeometry(0, 0, 720, 800)
         self.button_cf = QPushButton("START",self)
@@ -37,18 +36,24 @@ class Switch(QWidget):
             }
         """)
         self.button_cf.clicked.connect(self.troggle_on)
-        self.button_cf.clicked.connect(self.read_coils)
+        # Start M2 monitor timer (every 200 ms)
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.read_coils)
+        self.timer.start(200)
         self. show()
     def troggle_on(self):
-        client.write_coil(address=0, value=True)
-        QTimer.singleShot(50, lambda: client.write_coil(0, False))
+        client.write_coil(0, True)  # Set M0 = 1
+        QTimer.singleShot(50, lambda: client.write_coil(0, False))  # Reset M0
+        print("START signal sent to PLC")
     def read_coils(self):
-        self.response = client.read_coils(address=2, count=1)
-        self.value = self.response.bits[0]
-        # --- Detect FALLING EDGE (ON → OFF) ---
-        if self.value:
-            print("Process is done!")
-        print("M2 =", self.value)
+        rr = client.read_coils(24576, count=1)
+        if rr.isError():
+            print("Modbus read error")
+            return
+        m2 = rr.bits[0]
+        if self.previous_value and not m2:
+            print("M2 turned OFF — Process finished!")
+        self.previous_value = m2
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
