@@ -17,6 +17,7 @@ class Switch(QWidget):
     def __init__(self):
         super().__init__()
         self.previous_value = False
+        self.value = False
         self.setWindowTitle("PRUEBA PLC")
         self.setGeometry(0, 0, 720, 800)
         self.button_cf = QPushButton("START",self)
@@ -35,27 +36,19 @@ class Switch(QWidget):
                 background-color: #8fff8f;  /* slightly darker green */
             }
         """)
-        self.button_cf.setCheckable(True)
         self.button_cf.clicked.connect(self.troggle_on)
         self.button_cf.clicked.connect(self.read_coils)
         self. show()
     def troggle_on(self):
-        self.button_cf.setChecked(True)
         client.write_coil(address=0, value=True)
-        QTimer.singleShot(50, self.reset_button)
         QTimer.singleShot(50, lambda: client.write_coil(0, False))
-    def reset_button(self):
-        self.button_cf.setChecked(False)
     def read_coils(self):
-        response = client.read_coils(address=2, count=1)
-        value = response.bits[0]
+        self.response = client.read_coils(address=2, count=1)
+        self.value = self.response.bits[0]
         # --- Detect FALLING EDGE (ON → OFF) ---
-        if self.previous_value is True and value is False:
+        if self.value:
             print("Process is done!")
-        # update previous value
-        self.previous_value = value
-        # print live state
-        print("M2 =", value)
+        print("M2 =", self.value)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
