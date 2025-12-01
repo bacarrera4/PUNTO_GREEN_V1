@@ -5,8 +5,8 @@ from pymodbus.client import ModbusSerialClient
 from PyQt6.QtWidgets import QApplication, QWidget, QCheckBox, QSlider, QPushButton, QLabel, QProgressBar
 from PyQt6.QtCore import Qt, QTimer
 client = ModbusSerialClient(
-    port="COM7",           # <-- your RS-232 adapter port
-    baudrate=19200,         # must match PLC settings
+    port="COM7",
+    baudrate=19200,
     bytesize=8,
     parity='E',
     stopbits=1,
@@ -45,7 +45,7 @@ class Switch(QWidget):
         self.timer1 = QTimer(self)
         self.timer1.timeout.connect(self.read_register)
         self.timer1.start(100)
-        # label name
+        # label timer
         self.tittletd0 = QLabel(self)
         self.tittletd0.setGeometry(260, 400, 200, 30)
         self.tittletd0.setStyleSheet("color: green; font-size: 24pt;border: "
