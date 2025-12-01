@@ -14,7 +14,7 @@ An embedded system for a smart vending machine that offers up to 20 different ho
 
 ## 📂 Project Structure
 ```
-project-name/
+PUNTO_GREEN_V2/
 ├── src/
 ├── tests/
 ├── requirements.txt
