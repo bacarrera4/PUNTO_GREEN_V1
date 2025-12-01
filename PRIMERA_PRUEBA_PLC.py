@@ -2,7 +2,7 @@ import sys
 import time
 from pymodbus import client
 from pymodbus.client import ModbusSerialClient
-from PyQt6.QtWidgets import QApplication, QWidget, QCheckBox, QSlider, QPushButton
+from PyQt6.QtWidgets import QApplication, QWidget, QCheckBox, QSlider, QPushButton, QLabel
 from PyQt6.QtCore import Qt, QTimer
 client = ModbusSerialClient(
     port="COM7",           # <-- your RS-232 adapter port
@@ -40,6 +40,13 @@ class Switch(QWidget):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.read_coils)
         self.timer.start(200)
+        # Start TD0 monitor timer (every 200 ms)
+        self.timer1 = QTimer(self)
+        self.timer1.timeout.connect(self.read_register)
+        self.timer1.start(100)
+        # label name
+        self.tittletd0 = QLabel(self)
+        self.tittletd0.setGeometry(100, 200, 200, 30)
         self. show()
     def troggle_on(self):
         client.write_coil(0, True)  # Set M0 = 1
@@ -54,7 +61,13 @@ class Switch(QWidget):
         if self.previous_value and not m2:
             print("M2 turned OFF — Process finished!")
         self.previous_value = m2
-
+    def read_register(self):
+        result=client.read_holding_registers(32768, count=1)
+        td0_value = result.registers[0]
+        if td0_value!=0:
+            self.tittletd0.setText(str(td0_value))
+        else:
+            self.tittletd0.setText("")
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     # Instantiate the custom window class
