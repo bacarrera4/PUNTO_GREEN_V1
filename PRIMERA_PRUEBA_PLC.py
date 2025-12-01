@@ -15,10 +15,11 @@ client = ModbusSerialClient(
 class Switch(QWidget):
     def __init__(self):
         super().__init__()
-        self.previous_value = False
-        self.m2 = False
         self.setWindowTitle("PRUEBA PLC")
         self.setGeometry(0, 0, 720, 800)
+        self.previous_value = False
+        self.m2 = False
+        self.thanks_window=None
         self.button_cf = QPushButton("START",self)
         self.button_cf.setGeometry(250, 250, 220, 75)
         self.button_cf.setStyleSheet("""
@@ -72,6 +73,7 @@ class Switch(QWidget):
         m2 = rr.bits[0]
         if self.previous_value and not m2:
             print("M2 turned OFF — Process finished!")
+            self.open_thanks()
         self.previous_value = m2
     def read_register(self):
         result=client.read_holding_registers(32768, count=1)
@@ -82,6 +84,23 @@ class Switch(QWidget):
         else:
             self.tittletd0.setText("")
             self.progress.setValue(0)
+    def open_thanks(self):
+        if self.thanks_window is None:
+            self.thanks_window = Thanks_Window()
+        self.thanks_window.show()
+        self.close()
+class Thanks_Window(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("GRACIAS")
+        self.setGeometry(0, 0, 720, 800)
+        # label name
+        self.tittleth = QLabel(self)
+        self.tittleth.setGeometry(260, 400, 200, 30)
+        self.tittleth.setText("GRACIAS")
+        self.tittleth.setStyleSheet("color: green; font-size: 24pt;border: "
+                                     "1px solid rgb(135, 206, 235);border-radius: 25px;")
+        self.tittleth.setAlignment(Qt.AlignmentFlag.AlignCenter)
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     # Instantiate the custom window class
