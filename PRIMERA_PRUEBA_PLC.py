@@ -1,8 +1,6 @@
 import sys
-import time
-from pymodbus import client
 from pymodbus.client import ModbusSerialClient
-from PyQt6.QtWidgets import QApplication, QWidget, QCheckBox, QSlider, QPushButton, QLabel, QProgressBar
+from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QProgressBar
 from PyQt6.QtCore import Qt, QTimer
 client = ModbusSerialClient(
     port="COM7",
