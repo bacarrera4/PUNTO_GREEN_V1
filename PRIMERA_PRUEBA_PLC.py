@@ -2,7 +2,7 @@ import sys
 import time
 from pymodbus import client
 from pymodbus.client import ModbusSerialClient
-from PyQt6.QtWidgets import QApplication, QWidget, QCheckBox, QSlider, QPushButton, QLabel
+from PyQt6.QtWidgets import QApplication, QWidget, QCheckBox, QSlider, QPushButton, QLabel, QProgressBar
 from PyQt6.QtCore import Qt, QTimer
 client = ModbusSerialClient(
     port="COM7",           # <-- your RS-232 adapter port
@@ -46,7 +46,19 @@ class Switch(QWidget):
         self.timer1.start(100)
         # label name
         self.tittletd0 = QLabel(self)
-        self.tittletd0.setGeometry(100, 200, 200, 30)
+        self.tittletd0.setGeometry(260, 400, 200, 30)
+        self.tittletd0.setStyleSheet("color: green; font-size: 24pt;border: "
+                                     "1px solid rgb(135, 206, 235);border-radius: 25px;")
+        self.tittletd0.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        # Progress bar
+        self.progress = QProgressBar(self)
+        self.progress.setGeometry(110, 600, 500, 40)  # visible area
+        self.progress.setRange(0, 50)
+        self.progress.setValue(0)
+        #self.progress.setStyleSheet("""QProgressBar {border: 2px solid #fbff1e;border-radius: 10px;text-align: center;background: #f7cc94;height: 25px;}QProgressBar::chunk {background-color: #ff5e1e;width: 20px;margin: 1px;}""")
+        self.progress.setStyleSheet("""QProgressBar {border: 2px solid #ff8800;border-radius: 8px;background: #fff5e6;text-align: center;color: #cc6600;font-weight: bold;}QProgressBar::chunk {background-color: #ff6600;width: 15px;margin: 1px;}""")
+        #self.progress.setStyleSheet("""QProgressBar {border: 2px solid #3fbf3f;border-radius: 10px;text-align: center;background: #d6ffd6;height: 25px;font-weight: bold;color: #006600;}QProgressBar::chunk {background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0,stop:0 #00ff00,stop:1 #009900);border-radius: 8px;}""")
+        #self.progress.setStyleSheet("""QProgressBar {border: 2px solid #555;border-radius: 10px;text-align: center;background: #222;color: white;}QProgressBar::chunk {background-color: #00bfff;width: 20px;}""")
         self. show()
     def troggle_on(self):
         client.write_coil(0, True)  # Set M0 = 1
@@ -66,8 +78,10 @@ class Switch(QWidget):
         td0_value = result.registers[0]
         if td0_value!=0:
             self.tittletd0.setText(str(td0_value))
+            self.progress.setValue(td0_value)
         else:
             self.tittletd0.setText("")
+            self.progress.setValue(0)
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     # Instantiate the custom window class
