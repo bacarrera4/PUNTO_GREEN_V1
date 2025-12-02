@@ -67,6 +67,7 @@ class Switch(QWidget):
         print("START signal sent to PLC")
     def read_coils(self):
         if not self.connected:
+            self.check_plc_connection()
             return  # Skip reading when PLC is offline
         rr = client.read_coils(24576, count=1)
         if rr.isError():
@@ -77,6 +78,7 @@ class Switch(QWidget):
         self.previous_value = m2
     def read_register(self):
         if not self.connected:
+            self.check_plc_connection()
             return  # Prevent blocking
         result = client.read_holding_registers(32768, count=1)
         if result.isError():
