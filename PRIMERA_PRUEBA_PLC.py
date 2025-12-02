@@ -74,6 +74,7 @@ class Switch(QWidget):
             return
         m2 = rr.bits[0]
         if self.previous_value and not m2:
+            print("PROCESS FINISHED SUCCESFULLY!!!!")
             self.open_thanks()
         self.previous_value = m2
     def read_register(self):
