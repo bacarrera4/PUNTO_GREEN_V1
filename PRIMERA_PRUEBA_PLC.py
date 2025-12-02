@@ -1,6 +1,6 @@
 import sys
 from pymodbus.client import ModbusSerialClient
-from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QProgressBar
+from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QProgressBar, QMessageBox
 from PyQt6.QtCore import Qt, QTimer
 client = ModbusSerialClient(
     port="COM7",
@@ -15,9 +15,11 @@ class Switch(QWidget):
         super().__init__()
         self.setWindowTitle("PRUEBA PLC")
         self.setGeometry(0, 0, 720, 800)
+        QTimer.singleShot(200, self.check_plc_connection)
         self.previous_value = False
         self.m2 = False
         self.thanks_window=None
+        self.connected = False
         self.button_cf = QPushButton("START",self)
         self.button_cf.setGeometry(250, 250, 220, 75)
         self.button_cf.setStyleSheet("""
@@ -64,29 +66,37 @@ class Switch(QWidget):
         QTimer.singleShot(50, lambda: client.write_coil(0, False))  # Reset M0
         print("START signal sent to PLC")
     def read_coils(self):
+        if not self.connected:
+            return  # Skip reading when PLC is offline
         rr = client.read_coils(24576, count=1)
         if rr.isError():
-            print("Modbus read error")
             return
         m2 = rr.bits[0]
         if self.previous_value and not m2:
-            print("M2 turned OFF — Process finished!")
             self.open_thanks()
         self.previous_value = m2
     def read_register(self):
-        result=client.read_holding_registers(32768, count=1)
+        if not self.connected:
+            return  # Prevent blocking
+        result = client.read_holding_registers(32768, count=1)
+        if result.isError():
+            return
         td0_value = result.registers[0]
-        if td0_value!=0:
-            self.tittletd0.setText(str(td0_value))
-            self.progress.setValue(td0_value)
-        else:
-            self.tittletd0.setText("")
-            self.progress.setValue(0)
+        self.tittletd0.setText(str(td0_value) if td0_value != 0 else "")
+        self.progress.setValue(td0_value)
     def open_thanks(self):
         if self.thanks_window is None:
             self.thanks_window = Thanks_Window()
         self.thanks_window.show()
         self.close()
+    def check_plc_connection(self):
+        self.connected = client.connect()
+        if not self.connected:
+            QMessageBox.critical(
+                self,
+                "PLC Error",
+                "No se pudo conectar al PLC.\nVerifique el cable, puerto o alimentación."
+            )
 class Thanks_Window(QWidget):
     def __init__(self):
         super().__init__()
