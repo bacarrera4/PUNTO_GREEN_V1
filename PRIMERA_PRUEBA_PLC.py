@@ -81,12 +81,15 @@ class Switch(QWidget):
         if not self.connected:
             self.check_plc_connection()
             return  # Prevent blocking
-        result = client.read_holding_registers(32768, count=1)
-        if result.isError():
+        result_int = client.read_holding_registers(10, count=1)
+        result_dec = client.read_holding_registers(11, count=1)
+        if result_int.isError():
             return
-        td0_value = result.registers[0]
+        td0_valuei = result_int.registers[0]
+        td0_valued = result_dec.registers[0]
+        td0_value=float(f"{td0_valuei}.{td0_valued}")
         self.tittletd0.setText(str(td0_value) if td0_value != 0 else "")
-        self.progress.setValue(td0_value)
+        self.progress.setValue(int(td0_value))
     def open_thanks(self):
         if self.thanks_window is None:
             self.thanks_window = Thanks_Window()
