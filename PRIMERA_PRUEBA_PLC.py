@@ -87,7 +87,7 @@ class Switch(QWidget):
             return
         td0_valuei = result_int.registers[0]
         td0_valued = result_dec.registers[0]
-        td0_value=float(f"{td0_valuei}.{td0_valued}")
+        td0_value=float(f"{td0_valuei}.{td0_valued:01d}")
         self.tittletd0.setText(str(td0_value) if td0_value != 0 else "")
         self.progress.setValue(int(td0_value))
     def open_thanks(self):
